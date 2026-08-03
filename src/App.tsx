@@ -3,9 +3,10 @@ import Clock from "./components/Clock";
 import WordDisplay from "./components/WordDisplay";
 import TypingInput from "./components/Typinginput";
 import RestartButton from "./components/RestartButton";
+import { MistakesCounter } from "./components/MistakesCounter";
 
 export default function App() {
-  const {target,typed,elapsed,finished,handleInputChange,reset}=useTypingEngine();
+  const {target,typed,elapsed,finished,mistakes,handleInputChange,reset}=useTypingEngine();
 
   return (
     <div>
@@ -13,6 +14,9 @@ export default function App() {
 
       {/* Le clock */}
       <Clock elapsed={elapsed} />
+
+      {/* Mistake counter */}
+      <MistakesCounter mistakes={mistakes} />
 
       {/* the field where the words appear */}
       <WordDisplay target={target} typed={typed} />

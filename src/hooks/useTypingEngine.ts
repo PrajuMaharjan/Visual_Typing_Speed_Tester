@@ -8,9 +8,10 @@ export function useTypingEngine(){
     const [typed,setTyped]=useState("");
     const [startTime,setStartTime]=useState<number | null>(null);
     const [elapsed,setElapsed]=useState(0);
+    const [mistakes,setMistakes]=useState(0);
 
     const target=words.join(" ");
-    const finished=typed.length === target.length;  
+    const finished=typed === target;  
 
     // Clock stopwatch
     useEffect(()=>{
@@ -31,6 +32,14 @@ export function useTypingEngine(){
         if(startTime === null && value.length>0){
             setStartTime(Date.now());
         }
+
+        // Cheking if entered character is correct aand incrementing mistakes counter if wrong
+        if(value.length > typed.length){
+            const newCharIndex=value.length-1;
+            if(value[newCharIndex] !== target[newCharIndex]){
+                setMistakes((m) => m+1);
+            }
+        }
         setTyped(value);
     }
 
@@ -39,9 +48,10 @@ export function useTypingEngine(){
         setTyped("");
         setStartTime(null);
         setElapsed(0);
+        setMistakes(0);
     }
 
     return{
-        target,typed,elapsed,finished,handleInputChange,reset
+        target,typed,elapsed,mistakes,finished,handleInputChange,reset
     };
 }
