@@ -1,45 +1,31 @@
 import { useTypingEngine } from "./hooks/useTypingEngine";
+import Clock from "./components/Clock";
+import WordDisplay from "./components/WordDisplay";
+import TypingInput from "./components/Typinginput";
+import RestartButton from "./components/RestartButton";
 
-function App() {
-  const {target,typed,handleInputChange,reset}=useTypingEngine();
+export default function App() {
+  const {target,typed,elapsed,finished,handleInputChange,reset}=useTypingEngine();
 
   return (
     <div>
       <h1>Visual Typing Speed Tester</h1>
 
-      {/* the field where the words appear */}
-      <p>{[...target].map((char,i)=>{
-            let color="black";
-            let textDecoration="none";
+      {/* Le clock */}
+      <Clock elapsed={elapsed} />
 
-            if(i<typed.length){
-              if(typed[i] === char){
-                color="green";
-                textDecoration="line-through";
-              } else{
-                color="red";
-            }
-          }
-            
-            return(
-              <span key={i} style={{color,textDecoration}}>
-                {char}
-              </span>
-            );
-          })}
-      </p>
+      {/* the field where the words appear */}
+      <WordDisplay target={target} typed={typed} />
 
       {/* The field where the user types */}
-      <input value={typed}
-             onChange={(e)=>handleInputChange(e.target.value)}
-             autoFocus
+      <TypingInput  typed={typed}
+                    onChange={handleInputChange}
+                    disabled={finished}
       />
 
       {/* Restart Button */}
-      <button onClick={reset}>Restart</button>
+      <RestartButton onClick={reset} />
     
     </div>
   );
 }
-
-export default App;
