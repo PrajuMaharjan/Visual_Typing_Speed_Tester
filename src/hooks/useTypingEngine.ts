@@ -1,16 +1,12 @@
-import { useState ,useEffect} from "react";
-import { generateWords } from "../constants/words";
+import { useState ,useEffect, useCallback} from "react";
 
-const WORD_COUNT=20;
-
-export function useTypingEngine(){
-    const [words,setWords]=useState<string[]>(()=>generateWords(WORD_COUNT));
+export function useTypingEngine(getText:()=>string){
     const [typed,setTyped]=useState("");
+    const [target,setTarget]=useState<string>(getText);
     const [startTime,setStartTime]=useState<number | null>(null);
     const [elapsed,setElapsed]=useState(0);
     const [mistakes,setMistakes]=useState(0);
 
-    const target=words.join(" ");
     const finished=typed === target;  
 
     // Clock stopwatch
@@ -25,7 +21,7 @@ export function useTypingEngine(){
     },[startTime,finished]);
 
     function handleInputChange(value : string){
-        // Stop taking input once all the words have been typed
+        // Stop taking input once all the words have been typed correctly
         if(value.length>target.length) return;
 
         // Start the clock once the first letter is typed
@@ -43,13 +39,13 @@ export function useTypingEngine(){
         setTyped(value);
     }
 
-    function reset(){
-        setWords(generateWords(WORD_COUNT));
+    const reset = useCallback(()=>{
+        setTarget(getText());
         setTyped("");
         setStartTime(null);
         setElapsed(0);
         setMistakes(0);
-    }
+    },[getText]);
 
     return{
         target,typed,elapsed,mistakes,finished,handleInputChange,reset
