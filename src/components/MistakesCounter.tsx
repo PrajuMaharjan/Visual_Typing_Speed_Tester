@@ -2,8 +2,21 @@ interface MistakesCounterProps{
     mistakes:number;
 }
 
-export function MistakesCounter({mistakes} : MistakesCounterProps){
+export default function MistakesCounter({mistakes} : MistakesCounterProps){
     return(
-        <p>Mistakes : {mistakes}</p>
+        <div style= {{
+                        display:"inline-block",
+                        padding:"0.5rem 1.25rem",
+                        margin:"0 0.5rem",
+                        border:"1px solid #ccc",
+                        borderRadius:"8px",
+                        fontFamily:"monospace",
+                        fontSize:"1.1rem",
+                        minWidth:"90px",
+                        color:mistakes>0 ? "red" : "inherit"
+                    }}
+        >
+            Mistakes : {mistakes}
+        </div>
     );
 }

@@ -7,8 +7,10 @@ import { WORD_COUNT } from "./constants/words";
 import WordDisplay from "./components/WordDisplay";
 import TypingInput from "./components/TypingInput";
 import RestartButton from "./components/RestartButton";
-import {MistakesCounter} from "./components/MistakesCounter";
+import MistakesCounter from "./components/MistakesCounter";
 import ModeToggle, {type Mode} from "./components/ModeToggle";
+
+import cat from "../assets/images/cat.gif";
 
 export default function App() {
   const [mode,setMode]=useState<Mode>("words");
@@ -19,7 +21,7 @@ export default function App() {
   const getText=useCallback(() : string => {
     if(mode==="words"){
       if (wordBank.length===0){
-        return "No word found.";
+        return "No words found.";
       }
       return generateWords(wordBank,WORD_COUNT).join(" ");
     }
@@ -41,16 +43,39 @@ export default function App() {
   },[reset]);
 
   return (
-    <div>
+    <div style= {{
+                  maxWidth:"700px",
+                  margin:"0 auto",
+                  padding:"2rem 1rem 4rem",
+                  textAlign:"center",
+                  fontFamily:"sans-serif"
+                }}
+    >
       <h1>Visual Typing Speed Tester</h1>
+
+      {/* Humor */}
+      <img  src={cat}
+            alt="Tys=ping speed tester"
+            style={{
+                    maxWidth:"280px",
+                    width:"100%",
+                    margin:"1rem auto",
+                    borderRadius:"8px",
+                    display:"block"
+                  }}
+      />
 
       <ModeToggle mode={mode} onChange={setMode} />
 
-      {/* Le clock */}
-      <Clock elapsed={elapsed} />
+      <div style={{display:"flex",justifyContent:"center",margin:"1rem 0"}}>
 
-      {/* Mistake counter */}
-      <MistakesCounter mistakes={mistakes} />
+        {/* Le clock */}
+        <Clock elapsed={elapsed} />
+
+        {/* Mistake counter */}
+        <MistakesCounter mistakes={mistakes} />
+
+      </div>
 
       {/* the field where the words appear */}
       <WordDisplay target={target} typed={typed} />
@@ -61,9 +86,11 @@ export default function App() {
                     disabled={finished}
       />
 
-      {/* Restart Button */}
-      <RestartButton onClick={reset} />
-    
+      <div style={{marginTop:"2.5rem"}}>
+        {/* Restart Button */}
+        <RestartButton onClick={reset} />
+      </div>
+
     </div>
   );
 }
