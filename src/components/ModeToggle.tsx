@@ -9,9 +9,8 @@ export default function ModeToggle({mode,onChange} : ModeToggleProps){
     function buttonStyle(isActive:boolean){
         return{
             padding:"0.5rem 1.25rem",
-            margin:"0 0.5rem",
+            flex:1,
             border:"none",
-            borderRadius:"6px",
             color:"white",
             backgroundColor:isActive ? "green" : "red",
             cursor:isActive ? "default" : "pointer",
@@ -21,12 +20,12 @@ export default function ModeToggle({mode,onChange} : ModeToggleProps){
     }
     
     return(
-        <div style={{display:"flex",justifyContent:"center",margin:"1.5rem 0"}}>
+        <div style={{display:"flex",justifyContent:"center",maxWidth:"400px",margin:"1.5rem auto"}}>
             <button disabled={mode === "words"} onClick={()=>onChange("words")} style={buttonStyle(mode==="words")}>
                 Random Words
             </button>
 
-            <button disabled={mode==="text"} onClick={()=>onChange("text")} style={buttonStyle(mode==="words")}>
+            <button disabled={mode==="text"} onClick={()=>onChange("text")} style={buttonStyle(mode==="text")}>
                 Text
             </button>
         </div>
