@@ -5,6 +5,7 @@ import { useWords,generateWords } from "./hooks/useWords";
 import Clock from "./components/Clock";
 import { WORD_COUNT } from "./constants/words";
 import WordDisplay from "./components/WordDisplay";
+import WPMCounter from "./components/WPMCounter"
 import TypingInput from "./components/TypingInput";
 import RestartButton from "./components/RestartButton";
 import MistakesCounter from "./components/MistakesCounter";
@@ -34,7 +35,7 @@ export default function App() {
     return text[randomIndex];
   },[mode,wordBank,text]);
 
-  const {target,typed,elapsed,finished,mistakes,handleInputChange,reset}=useTypingEngine(getText);
+  const {target,typed,cursor,elapsed,wpm,finished,mistakes,typeCharacter,backspace,moveCursorLeft,moveCursorRight,reset}=useTypingEngine(getText);
 
   // Generates either words from either words.ts or text from text.txt
   useEffect(()=>{
@@ -75,14 +76,20 @@ export default function App() {
         {/* Mistake counter */}
         <MistakesCounter mistakes={mistakes} />
 
+        <WPMCounter wpm={wpm} />
+
       </div>
 
       {/* the field where the words appear */}
-      <WordDisplay target={target} typed={typed} />
+      <WordDisplay target={target} typed={typed} cursor={cursor} />
 
       {/* The field where the user types */}
       <TypingInput  typed={typed}
-                    onChange={handleInputChange}
+                    cursor={cursor}
+                    onType={typeCharacter}
+                    onBackspace={backspace}
+                    onMoveLeft={moveCursorLeft}
+                    onMoveRight={moveCursorRight}
                     disabled={finished}
       />
 

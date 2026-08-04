@@ -1,9 +1,10 @@
 interface WordDisplayProps{
     target:string;
     typed:string;
+    cursor:number;
 }
 
-export default function WordDisplay({target,typed} : WordDisplayProps){
+export default function WordDisplay({target,typed,cursor} : WordDisplayProps){
     return(
       <div style= {{
                       position:"relative",
@@ -21,7 +22,7 @@ export default function WordDisplay({target,typed} : WordDisplayProps){
                         position:"absolute",
                         left:"50%",
                         whiteSpace:"nowrap",
-                        transform:`translateX(-${typed.length}ch)`,
+                        transform:`translateX(-${cursor}ch)`,
                         transition:"transform 0.1s linear",
                       }}
           >

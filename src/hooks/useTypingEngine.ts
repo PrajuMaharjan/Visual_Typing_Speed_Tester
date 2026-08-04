@@ -3,11 +3,17 @@ import { useState ,useEffect, useCallback} from "react";
 export function useTypingEngine(getText:()=>string){
     const [typed,setTyped]=useState("");
     const [target,setTarget]=useState<string>(getText);
+    const [cursor,setCursor]=useState(0);
     const [startTime,setStartTime]=useState<number | null>(null);
     const [elapsed,setElapsed]=useState(0);
     const [mistakes,setMistakes]=useState(0);
 
     const finished=typed === target;  
+
+    // WPM calculation logic
+    const correctChars=[...typed].filter((char,i)=>char===target[i]).length;
+    const minutesElapsed=elapsed/60;
+    const wpm = minutesElapsed>0 ? Math.round(correctChars / 5 / minutesElapsed) : 0;
 
     // Clock stopwatch
     useEffect(()=>{
@@ -20,34 +26,53 @@ export function useTypingEngine(getText:()=>string){
         return ()=>clearInterval(interval);
     },[startTime,finished]);
 
-    function handleInputChange(value : string){
-        // Stop taking input once all the words have been typed correctly
-        if(value.length>target.length) return;
+    // This function ensures that the mistakes dont count towards words/letters typed
+    // When you delete a character, it reduces letter count by 1
+    function typeCharacter(char:string){
+        if(finished) return;
 
-        // Start the clock once the first letter is typed
-        if(startTime === null && value.length>0){
+        const base=typed.slice(0,cursor);
+        if(base.length >= target.length) return;
+
+        if(startTime === null){
             setStartTime(Date.now());
         }
 
-        // Cheking if entered character is correct aand incrementing mistakes counter if wrong
-        if(value.length > typed.length){
-            const newCharIndex=value.length-1;
-            if(value[newCharIndex] !== target[newCharIndex]){
-                setMistakes((m) => m+1);
-            }
+        const newIndex=base.length;
+        if(char !== target[newIndex]){
+            setMistakes((m) => m+1);
         }
-        setTyped(value);
+
+        const newTyped=base+char;
+        setTyped(newTyped);
+        setCursor(newTyped.length);
+    }
+
+    function backspace(){
+        if(cursor===0) return;
+        const newTyped=typed.slice(0,cursor-1);
+        setTyped(newTyped);
+        setCursor(newTyped.length);
+    }
+
+    function moveCursorLeft(){
+        setCursor((c)=>Math.max(0,c-1));
+    }
+
+    function moveCursorRight(){
+        setCursor((c)=>Math.min(typed.length,c+1));
     }
 
     const reset = useCallback(()=>{
         setTarget(getText());
         setTyped("");
+        setCursor(0);
         setStartTime(null);
         setElapsed(0);
         setMistakes(0);
     },[getText]);
 
     return{
-        target,typed,elapsed,mistakes,finished,handleInputChange,reset
+        target,typed,cursor,elapsed,mistakes,wpm,finished,typeCharacter,reset,backspace,moveCursorLeft,moveCursorRight
     };
 }
