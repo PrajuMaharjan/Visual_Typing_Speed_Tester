@@ -1,7 +1,9 @@
-import { useEffect, useRef, type KeyboardEvent,type MouseEvent } from "react";
+import { useEffect, useRef} from "react";
+import type {KeyboardEvent,MouseEvent } from "react";
 
 interface TypingInputProps{
     typed:string;
+    target:string;
     cursor:number;
     onType:(char:string) => void;
     onBackspace:()=>void;
@@ -10,7 +12,7 @@ interface TypingInputProps{
     disabled:boolean;
 }
 
-export default function TypingInput({typed,cursor,onType,onBackspace,onMoveLeft,onMoveRight,disabled} : TypingInputProps){
+export default function TypingInput({typed,target,cursor,onType,onBackspace,onMoveLeft,onMoveRight,disabled} : TypingInputProps){
     const inputRef=useRef<HTMLInputElement>(null);
 
     useEffect(()=>{
@@ -55,28 +57,48 @@ export default function TypingInput({typed,cursor,onType,onBackspace,onMoveLeft,
     }
 
     return(
-        <input  ref={inputRef}
-                value={typed}
-                placeholder="Type here"
-                onChange={()=>{}}
-                onKeyDown={handleKeyDown}
-                onMouseDown={disabledMouseClick}
-                autoFocus
-                disabled={disabled}
-                style = {{
-                        display:"block",
-                        width:"100%",
-                        maxWidth:"600px",
-                        margin:"0 auto",
-                        padding:"0.75rem 1rem",
-                        fontFamily:"monospace",
-                        fontSize:"1.5rem",
-                        textAlign:'center',
-                        border:"2px solid #ccc",
-                        borderRadius:"8px",
-                        outline:"none",
-                        boxSizing:"border-box",
-                        }}
-        />
+        <div style={{
+                    position:"relative",
+                    width:"100%",
+                    maxWidth:"600px",
+                    margin:"0 auto",
+                    }}
+        >
+            {[...typed].map((char,i)=>{
+                const isCorrect = char === target[i];
+                return(
+                    <span key={i} style={{  color:isCorrect?"green" : "red",
+                                            textDecoration: isCorrect ? "line-through" : "none",
+                                        }}
+                    >
+                  {char}
+                </span>
+                );
+            })}
+
+            <input  ref={inputRef}
+                    value={typed}
+                    placeholder="Type here"
+                    onChange={()=>{}}
+                    onKeyDown={handleKeyDown}
+                    onMouseDown={disabledMouseClick}
+                    autoFocus
+                    disabled={disabled}
+                    style = {{
+                            display:"block",
+                            width:"100%",
+                            maxWidth:"600px",
+                            margin:"0 auto",
+                            padding:"0.75rem 1rem",
+                            fontFamily:"monospace",
+                            fontSize:"1.5rem",
+                            textAlign:'center',
+                            border:"2px solid #ccc",
+                            borderRadius:"8px",
+                            outline:"none",
+                            boxSizing:"border-box",
+                            }}
+            />
+        </div>
     );
 }

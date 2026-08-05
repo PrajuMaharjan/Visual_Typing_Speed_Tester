@@ -47,6 +47,7 @@ export default function WordDisplay({target,typed,cursor} : WordDisplayProps){
             })}
           </div>
 
+            {/* MARKER SHOWING CURRENT PROGRESS */}
             <div style= {{
                           position:"absolute",
                           left:"50%",
