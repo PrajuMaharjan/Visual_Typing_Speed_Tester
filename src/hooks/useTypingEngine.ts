@@ -50,6 +50,11 @@ export function useTypingEngine(getText:()=>string){
 
     function backspace(){
         if(cursor===0) return;
+
+        const typedSoFar=typed.slice(0,cursor);
+        const targetSoFar=target.slice(0,cursor);
+        if(typedSoFar === targetSoFar) return;
+
         const newTyped=typed.slice(0,cursor-1);
         setTyped(newTyped);
         setCursor(newTyped.length);
