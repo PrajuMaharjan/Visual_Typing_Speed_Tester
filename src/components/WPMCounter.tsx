@@ -5,8 +5,10 @@ interface WpmCounterProps{
 export default function WPMCounter({wpm} : WpmCounterProps){
     return(
         <div style= {{
-                        display:"inline-block",
-                        padding:"0.5 rem 1.25rem",
+                        display:"inline-flex",
+                        padding:"0.5rem 1.25rem",
+                        alignItems:"center",
+                        justifyContent:"center",
                         margin:"0 0.5rem",
                         border:"1px solid #ccc",
                         borderRadius:"8px",
