@@ -85,6 +85,7 @@ export default function App() {
 
       {/* The field where the user types */}
       <TypingInput  typed={typed}
+                    target={target}
                     cursor={cursor}
                     onType={typeCharacter}
                     onBackspace={backspace}
