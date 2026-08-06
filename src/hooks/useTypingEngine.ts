@@ -15,6 +15,17 @@ export function useTypingEngine(getText:()=>string){
     const minutesElapsed=elapsed/60;
     const wpm = minutesElapsed>0 ? Math.round(correctChars / 5 / minutesElapsed) : 0;
 
+    // Accuracy calculation logic
+    const tnLength=typed.length === target.length ? typed.length : cursor;
+    const correctCharsForAccuracy=[...typed.slice(0,tnLength)].filter((char,i)=>char===target[i]).length;
+    const accuracy=(correctCharsForAccuracy+mistakes)>0 
+                    ? Math.round((correctCharsForAccuracy)/(correctCharsForAccuracy+mistakes)*1000)/10 
+                    : 100;
+    
+    // Remaining mistakes calculation logic
+    const leftMistakes=[...typed.slice(0,cursor)].filter((char,i)=>char !== target[i]).length;
+    const rightMistakes=[...typed.slice(cursor)].filter((char,i)=>char !== target[cursor+i]).length;
+
     // Clock stopwatch
     useEffect(()=>{
         if(startTime === null || finished) return;
@@ -31,21 +42,23 @@ export function useTypingEngine(getText:()=>string){
     function typeCharacter(char:string){
         if(finished) return;
 
-        const base=typed.slice(0,cursor);
-        if(base.length >= target.length) return;
+        // Shift characters one step right when amending mistake
+        if (typed.length>=target.length) return;
 
         if(startTime === null){
             setStartTime(Date.now());
         }
 
-        const newIndex=base.length;
-        if(char !== target[newIndex]){
+        if(char !== target[cursor]){
             setMistakes((m) => m+1);
         }
 
-        const newTyped=base+char;
+        const newTyped=typed.slice(0,cursor) + char + typed.slice(cursor);
         setTyped(newTyped);
-        setCursor(newTyped.length);
+
+        // Jump the cursor to the end if all mistakes are amended
+        const remainingMistakes=[...newTyped].filter((c,i)=>c!==target[i]).length;
+        setCursor(remainingMistakes===0 ? newTyped.length : cursor+1);
     }
 
     function backspace(){
@@ -55,12 +68,17 @@ export function useTypingEngine(getText:()=>string){
         const targetSoFar=target.slice(0,cursor);
         if(typedSoFar === targetSoFar) return;
 
-        const newTyped=typed.slice(0,cursor-1);
+        // Delete only the one character to the left
+        const newTyped=typed.slice(0,cursor-1)+typed.slice(cursor);
         setTyped(newTyped);
-        setCursor(newTyped.length);
+        setCursor(cursor-1);
     }
 
     function moveCursorLeft(){
+        const typedSoFar=typed.slice(0,cursor);
+        const targetSoFar=target.slice(0,cursor);
+        if(typedSoFar === targetSoFar) return;
+        
         setCursor((c)=>Math.max(0,c-1));
     }
 
@@ -78,6 +96,6 @@ export function useTypingEngine(getText:()=>string){
     },[getText]);
 
     return{
-        target,typed,cursor,elapsed,mistakes,wpm,finished,typeCharacter,reset,backspace,moveCursorLeft,moveCursorRight
+        target,typed,cursor,elapsed,mistakes,wpm,accuracy,leftMistakes,rightMistakes,finished,typeCharacter,reset,backspace,moveCursorLeft,moveCursorRight
     };
 }

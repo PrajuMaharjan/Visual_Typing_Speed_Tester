@@ -9,7 +9,10 @@ import WPMCounter from "./components/WPMCounter"
 import TypingInput from "./components/TypingInput";
 import RestartButton from "./components/RestartButton";
 import MistakesCounter from "./components/MistakesCounter";
+import RemainingMistakesCounter from "./components/RemainingMistakesCounter";
+import AccuracyCounter from "./components/AccuracyCounter";
 import ModeToggle, {type Mode} from "./components/ModeToggle";
+import ResultsModal from "./components/ResultsModal";
 
 import cat from "../assets/images/cat.gif";
 
@@ -35,13 +38,30 @@ export default function App() {
     return text[randomIndex];
   },[mode,wordBank,text]);
 
-  const {target,typed,cursor,elapsed,wpm,finished,mistakes,typeCharacter,backspace,moveCursorLeft,moveCursorRight,reset}=useTypingEngine(getText);
+  const {target,leftMistakes,rightMistakes,typed,cursor,accuracy,elapsed,wpm,finished,mistakes,typeCharacter,backspace,moveCursorLeft,moveCursorRight,reset}=useTypingEngine(getText);
 
-  // Generates either words from either words.ts or text from text.txt
+  const[modalDismissed,setModalDismissed]=useState(false);
+  const showModal=finished && !modalDismissed;
+
+  // Generates either words from either words.ts or text from text.txt on the first render or when mode is changed
   useEffect(()=>{
     reset();
     
   },[reset]);
+
+
+  function handleRestart(){
+    reset();
+    setModalDismissed(false);
+  }
+
+  function handleCloseModal(){
+    setModalDismissed(true);
+  }
+
+  function handleBackToHome(){
+    // Placeholder for future
+  }
 
   return (
     <div style= {{
@@ -68,15 +88,22 @@ export default function App() {
 
       <ModeToggle mode={mode} onChange={setMode} />
 
-      <div style={{display:"flex",justifyContent:"center",margin:"1rem 0"}}>
+      <div style={{display:"flex",flexWrap:"wrap",justifyContent:"center",gap:"0.5rem",margin:"1rem 0"}}>
 
         {/* Le clock */}
         <Clock elapsed={elapsed} />
 
+        {/* Words per minute counter */}
+        <WPMCounter wpm={wpm} />
+
         {/* Mistake counter */}
         <MistakesCounter mistakes={mistakes} />
 
-        <WPMCounter wpm={wpm} />
+        {/* Accuracy counter */}
+        <AccuracyCounter accuracy={accuracy} />
+
+        {/* Remaining Mistakes counter */}
+        <RemainingMistakesCounter leftMistakes={leftMistakes} rightMistakes={rightMistakes} />
 
       </div>
 
@@ -96,9 +123,20 @@ export default function App() {
 
       <div style={{marginTop:"2.5rem"}}>
         {/* Restart Button */}
-        <RestartButton onClick={reset} />
+        <RestartButton onClick={handleRestart} />
       </div>
 
+      {/* ResultsModal */}
+      {showModal && (
+        <ResultsModal wpm={wpm}
+                      elapsedSeconds={elapsed}
+                      mistakes={mistakes}
+                      accuracy={accuracy}
+                      onRestart={handleRestart}
+                      onClose={handleCloseModal}
+                      onBackToHome={handleBackToHome}
+        />
+      )}
     </div>
   );
 }
