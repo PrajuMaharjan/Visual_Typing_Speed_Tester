@@ -15,6 +15,14 @@ export function useTypingEngine(getText:()=>string){
     const minutesElapsed=elapsed/60;
     const wpm = minutesElapsed>0 ? Math.round(correctChars / 5 / minutesElapsed) : 0;
 
+
+    const tnLength=typed.length === target.length ? typed.length : cursor;
+    const correctCharsForAccuracy=[...typed.slice(0,tnLength)].filter((char,i)=>char===target[i]).length;
+
+    const accuracy=(correctCharsForAccuracy+mistakes)>0 
+                    ? Math.round((correctCharsForAccuracy)/(correctCharsForAccuracy+mistakes)*1000)/10 
+                    : 100;
+
     // Clock stopwatch
     useEffect(()=>{
         if(startTime === null || finished) return;
@@ -84,6 +92,6 @@ export function useTypingEngine(getText:()=>string){
     },[getText]);
 
     return{
-        target,typed,cursor,elapsed,mistakes,wpm,finished,typeCharacter,reset,backspace,moveCursorLeft,moveCursorRight
+        target,typed,cursor,elapsed,mistakes,wpm,accuracy,finished,typeCharacter,reset,backspace,moveCursorLeft,moveCursorRight
     };
 }
