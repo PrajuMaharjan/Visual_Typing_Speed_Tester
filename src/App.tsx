@@ -9,6 +9,7 @@ import WPMCounter from "./components/WPMCounter"
 import TypingInput from "./components/TypingInput";
 import RestartButton from "./components/RestartButton";
 import MistakesCounter from "./components/MistakesCounter";
+import RemainingMistakesCounter from "./components/RemainingMistakesCounter";
 import AccuracyCounter from "./components/AccuracyCounter";
 import ModeToggle, {type Mode} from "./components/ModeToggle";
 
@@ -36,7 +37,7 @@ export default function App() {
     return text[randomIndex];
   },[mode,wordBank,text]);
 
-  const {target,typed,cursor,accuracy,elapsed,wpm,finished,mistakes,typeCharacter,backspace,moveCursorLeft,moveCursorRight,reset}=useTypingEngine(getText);
+  const {target,leftMistakes,rightMistakes,typed,cursor,accuracy,elapsed,wpm,finished,mistakes,typeCharacter,backspace,moveCursorLeft,moveCursorRight,reset}=useTypingEngine(getText);
 
   // Generates either words from either words.ts or text from text.txt
   useEffect(()=>{
@@ -69,7 +70,7 @@ export default function App() {
 
       <ModeToggle mode={mode} onChange={setMode} />
 
-      <div style={{display:"flex",justifyContent:"center",margin:"1rem 0"}}>
+      <div style={{display:"flex",flexWrap:"wrap",justifyContent:"center",gap:"0.5rem",margin:"1rem 0"}}>
 
         {/* Le clock */}
         <Clock elapsed={elapsed} />
@@ -82,6 +83,9 @@ export default function App() {
 
         {/* Accuracy counter */}
         <AccuracyCounter accuracy={accuracy} />
+
+        {/* Remaining Mistakes counter */}
+        <RemainingMistakesCounter leftMistakes={leftMistakes} rightMistakes={rightMistakes} />
 
       </div>
 
