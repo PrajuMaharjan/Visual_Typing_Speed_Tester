@@ -57,7 +57,8 @@ export function useTypingEngine(getText:()=>string){
         setTyped(newTyped);
 
         // Jump the cursor to the end if all mistakes are amended
-        setCursor(newTyped=== target ? newTyped.length : cursor+1);
+        const remainingMistakes=[...newTyped].filter((c,i)=>c!==target[i]).length;
+        setCursor(remainingMistakes===0 ? newTyped.length : cursor+1);
     }
 
     function backspace(){
