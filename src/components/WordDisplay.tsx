@@ -5,6 +5,8 @@ interface WordDisplayProps{
 }
 
 export default function WordDisplay({target,typed,cursor} : WordDisplayProps){
+    const lengthMatch=typed.length===target.length;
+  
     return(
       <div style= {{
                       position:"relative",
@@ -31,7 +33,10 @@ export default function WordDisplay({target,typed,cursor} : WordDisplayProps){
               let textDecoration="none";
 
               if(i<typed.length){
-                if(typed[i] === char){
+                const isPending=!lengthMatch && i>=cursor;
+                if(isPending){
+                  color="black";
+                }else if(typed[i] === char){
                   color="green";
                   textDecoration="line-through";
                 } else{
@@ -47,7 +52,7 @@ export default function WordDisplay({target,typed,cursor} : WordDisplayProps){
             })}
           </div>
 
-            {/* MARKER SHOWING CURRENT PROGRESS */}
+            {/* CURSOR SHOWING CURRENT PROGRESS */}
             <div style= {{
                           position:"absolute",
                           left:"50%",

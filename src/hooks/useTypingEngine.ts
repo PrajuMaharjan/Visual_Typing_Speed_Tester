@@ -31,21 +31,22 @@ export function useTypingEngine(getText:()=>string){
     function typeCharacter(char:string){
         if(finished) return;
 
-        const base=typed.slice(0,cursor);
-        if(base.length >= target.length) return;
+        // Shift characters one step right when amending mistake
+        if (typed.length>=target.length) return;
 
         if(startTime === null){
             setStartTime(Date.now());
         }
 
-        const newIndex=base.length;
-        if(char !== target[newIndex]){
+        if(char !== target[cursor]){
             setMistakes((m) => m+1);
         }
 
-        const newTyped=base+char;
+        const newTyped=typed.slice(0,cursor) + char + typed.slice(cursor);
         setTyped(newTyped);
-        setCursor(newTyped.length);
+
+        // Jump the cursor to the end if all mistakes are amended
+        setCursor(newTyped=== target ? newTyped.length : cursor+1);
     }
 
     function backspace(){
@@ -55,12 +56,17 @@ export function useTypingEngine(getText:()=>string){
         const targetSoFar=target.slice(0,cursor);
         if(typedSoFar === targetSoFar) return;
 
-        const newTyped=typed.slice(0,cursor-1);
+        // Delete only the one character to the left
+        const newTyped=typed.slice(0,cursor-1)+typed.slice(cursor);
         setTyped(newTyped);
-        setCursor(newTyped.length);
+        setCursor(cursor-1);
     }
 
     function moveCursorLeft(){
+        const typedSoFar=typed.slice(0,cursor);
+        const targetSoFar=target.slice(0,cursor);
+        if(typedSoFar === targetSoFar) return;
+        
         setCursor((c)=>Math.max(0,c-1));
     }
 

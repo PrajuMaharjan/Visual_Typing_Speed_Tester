@@ -15,8 +15,22 @@ interface TypingInputProps{
 export default function TypingInput({typed,target,cursor,onType,onBackspace,onMoveLeft,onMoveRight,disabled} : TypingInputProps){
     const inputRef=useRef<HTMLInputElement>(null);
 
+    // take over default browser type events with custom event
     useEffect(()=>{
-        inputRef.current?.setSelectionRange(cursor,cursor);
+        const element=inputRef.current;
+        if(!element) return;
+        
+        element.setSelectionRange(cursor,cursor);
+
+        const charWidth=element.scrollWidth/Math.max(typed.length,1);
+        const cursorPos=cursor*charWidth;
+        const visibleWidth=element.clientWidth;
+
+        if(cursorPos<element.scrollLeft){
+            element.scrollLeft=cursorPos;
+        }else if(cursorPos>element.scrollLeft+visibleWidth){
+            element.scrollLeft=cursorPos-visibleWidth+charWidth;
+        }
     },[cursor,typed]);
 
     function handleKeyDown(e:KeyboardEvent<HTMLInputElement>){
@@ -56,6 +70,9 @@ export default function TypingInput({typed,target,cursor,onType,onBackspace,onMo
         inputRef.current?.focus();
     }
 
+    // A "pending" check so that correcting mistakes dont get marked as a mistake itself
+    const lengthMatch=typed.length === target.length;
+
     return(
         <div style={{
                     position:"relative",
@@ -65,14 +82,25 @@ export default function TypingInput({typed,target,cursor,onType,onBackspace,onMo
                     }}
         >
             {[...typed].map((char,i)=>{
-                const isCorrect = char === target[i];
+                const isPending=!lengthMatch && i >= cursor;
+                const isCorrect = !isPending && char === target[i];
+                
+                let color : string;
+                if(isPending){
+                    color="black";
+                }else if(isCorrect){
+                    color="green";
+                }else{
+                    color="red";
+                }
+
                 return(
-                    <span key={i} style={{  color:isCorrect?"green" : "red",
+                    <span key={i} style={{  color,
                                             textDecoration: isCorrect ? "line-through" : "none",
                                         }}
                     >
-                  {char}
-                </span>
+                        {char}
+                    </span>
                 );
             })}
 
@@ -92,7 +120,7 @@ export default function TypingInput({typed,target,cursor,onType,onBackspace,onMo
                             padding:"0.75rem 1rem",
                             fontFamily:"monospace",
                             fontSize:"1.5rem",
-                            textAlign:'center',
+                            textAlign:'left',
                             border:"2px solid #ccc",
                             borderRadius:"8px",
                             outline:"none",
