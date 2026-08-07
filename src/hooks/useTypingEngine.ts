@@ -58,6 +58,10 @@ export function useTypingEngine(getText:()=>string,options:TypingEngineOptions={
         return ()=>clearInterval(interval);
     },[startTime,finished]);
 
+    function now():number{
+        return Date.now();
+    }
+
     // This function ensures that the mistakes dont count towards words/letters typed
     // When you delete a character, it reduces letter count by 1
     function typeCharacter(char:string){
@@ -72,7 +76,7 @@ export function useTypingEngine(getText:()=>string,options:TypingEngineOptions={
         if (typed.length>=target.length) return;
 
         if(startTime === null){
-            setStartTime(Date.now());
+            setStartTime(now());
         }
 
         if(char !== target[cursor]){
@@ -82,9 +86,7 @@ export function useTypingEngine(getText:()=>string,options:TypingEngineOptions={
         const newTyped=typed.slice(0,cursor) + char + typed.slice(cursor);
         setTyped(newTyped);
 
-        // Jump the cursor to the end if all mistakes are amended
-        const remainingMistakes=[...newTyped].filter((c,i)=>c!==target[i]).length;
-        setCursor(remainingMistakes===0 ? newTyped.length : cursor+1);
+        setCursor(cursorAfterEdit(newTyped, cursor+1));
     }
 
     function backspace(){
@@ -97,7 +99,14 @@ export function useTypingEngine(getText:()=>string,options:TypingEngineOptions={
         // Delete only the one character to the left
         const newTyped=typed.slice(0,cursor-1)+typed.slice(cursor);
         setTyped(newTyped);
-        setCursor(cursor-1);
+
+        setCursor(cursorAfterEdit(newTyped, cursor-1));
+    }
+
+    // Jump the cursor to the end if all mistakes are amended
+    function cursorAfterEdit(newTyped:string,fallbackCursor:number):number{
+        const remainingMistakes=[...newTyped].filter((c,i)=>c!==target[i]).length;
+        return remainingMistakes===0 ? newTyped.length : fallbackCursor;
     }
 
     function moveCursorLeft(){
