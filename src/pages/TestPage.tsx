@@ -123,6 +123,10 @@ export default function TestPage() {
 
                     {/* Accuracy counter */}
                     <AccuracyCounter accuracy={accuracy} />
+                
+                </div>
+
+                <div style={{display:"flex",flexWrap:"wrap",justifyContent:"center",gap:"0.5rem",margin:"1rem 0"}}>
 
                     {/* Remaining Mistakes counter */}
                     <RemainingMistakesCounter leftMistakes={leftMistakes} rightMistakes={rightMistakes} />
