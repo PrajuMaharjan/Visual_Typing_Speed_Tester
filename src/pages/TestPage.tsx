@@ -9,6 +9,7 @@ import WordDisplay from "../components/WordDisplay";
 import WPMCounter from "../components/WPMCounter"
 import TypingInput from "../components/TypingInput";
 import RestartButton from "../components/RestartButton";
+import BackButton from "../components/BackButton";
 import MistakesCounter from "../components/MistakesCounter";
 import RemainingMistakesCounter from "../components/RemainingMistakesCounter";
 import WordsStatCounter from "../components/WordStatsCounter";
@@ -158,9 +159,13 @@ export default function TestPage() {
                                 disabled={finished}
                 />
 
-                <div style={{marginTop:"2.5rem"}}>
+                <div style={{marginTop:"2.5rem",display:"flex",justifyContent:'center',gap:'0.75rem'}}>
+
                     {/* Restart Button */}
                     <RestartButton onClick={handleRestart} />
+                    
+                    <BackButton onClick={handleBackToHome} />
+                    
                 </div>
 
                 {/* ResultsModal */}
