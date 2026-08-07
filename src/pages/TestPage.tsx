@@ -1,7 +1,7 @@
 import { useState,useEffect,useCallback } from "react";
 import {useSearchParams,useNavigate} from "react-router-dom";
 import { useTypingEngine } from "../hooks/useTypingEngine";
-import {useText} from"../hooks/useText";
+import {useText,getRandomLines} from"../hooks/useText";
 import { useWords,generateWords } from "../hooks/useWords";
 import Clock from "../components/Clock";
 import { WORD_COUNT } from "../constants/words";
@@ -12,8 +12,9 @@ import RestartButton from "../components/RestartButton";
 import MistakesCounter from "../components/MistakesCounter";
 import RemainingMistakesCounter from "../components/RemainingMistakesCounter";
 import AccuracyCounter from "../components/AccuracyCounter";
-import type {Mode} from "../components/ModeToggle";
 import ResultsModal from "../components/ResultsModal";
+
+type Mode = "words" | "text";
 
 export default function TestPage() {
     const [searchParams]=useSearchParams();
@@ -24,7 +25,11 @@ export default function TestPage() {
     const length=searchParams.get("length");
     const content=searchParams.get("content");
 
+
     const mode:Mode=content==="text" ? "text" : "words";
+    const isTimed=type=="timed";
+    const lengthMultiplier=length ? parseInt(length,10) : 1;
+    const durationSeconds=isTimed && duration ? parseInt(duration,10)*60 : undefined;
     
     const {text}=useText();
     const {wordBank}=useWords();
@@ -34,18 +39,30 @@ export default function TestPage() {
             if (wordBank.length===0){
                 return "No words found.";
             }
-                return generateWords(wordBank,WORD_COUNT).join(" ");
+                // Different ways to retrieve data depending on test mode
+                const count=isTimed ? WORD_COUNT : WORD_COUNT*lengthMultiplier;
+                return generateWords(wordBank,count).join(" ");
         }
 
         if(text.length === 0){
             return "No text found";
         }
     
-        const randomIndex=Math.floor(Math.random() * text.length);
-        return text[randomIndex];
+        const lineCount=isTimed ? 1 : lengthMultiplier;
+        return getRandomLines(text,lineCount);
+    },[mode,wordBank,text,isTimed,lengthMultiplier]);
+
+    // For Timed Mode : Pulls text once running low
+    const extendText=useCallback(():string=>{
+        if(mode==="words"){
+            if(wordBank.length===0) return "";
+            return " "+generateWords(wordBank,WORD_COUNT).join(" ");
+        }
+        if(text.length===0) return "";
+        return " "+getRandomLines(text,1);
     },[mode,wordBank,text]);
 
-    const {target,leftMistakes,rightMistakes,typed,cursor,accuracy,elapsed,wpm,finished,mistakes,typeCharacter,backspace,moveCursorLeft,moveCursorRight,reset}=useTypingEngine(getText);
+    const {target,leftMistakes,rightMistakes,typed,cursor,accuracy,elapsed,timeRemaining,wpm,finished,mistakes,typeCharacter,backspace,moveCursorLeft,moveCursorRight,reset}=useTypingEngine(getText,isTimed ? {durationSeconds,extendText}:undefined);
 
     const [prevFinished,setPrevFinished]=useState(finished);
     const [showModal,setShowModal]=useState(false);
@@ -62,9 +79,7 @@ export default function TestPage() {
     // Generates either words from either words.ts or text from text.txt on the first render or when mode is changed
     useEffect(()=>{
         reset();
-        
     },[reset]);
-
 
     function handleRestart(){
         reset();
@@ -98,7 +113,7 @@ export default function TestPage() {
                 <div style={{display:"flex",flexWrap:"wrap",justifyContent:"center",gap:"0.5rem",margin:"1rem 0"}}>
 
                     {/* Le clock */}
-                    <Clock elapsed={elapsed} />
+                    <Clock elapsed={elapsed} timeRemaining={timeRemaining} />
 
                     {/* Words per minute counter */}
                     <WPMCounter wpm={wpm} />
@@ -135,13 +150,13 @@ export default function TestPage() {
 
                 {/* ResultsModal */}
                 {showModal && (
-                    <ResultsModal wpm={wpm}
-                                elapsedSeconds={elapsed}
-                                mistakes={mistakes}
-                                accuracy={accuracy}
-                                onRestart={handleRestart}
-                                onClose={handleCloseModal}
-                                onBackToHome={handleBackToHome}
+                    <ResultsModal   wpm={wpm}
+                                    elapsedSeconds={elapsed}
+                                    mistakes={mistakes}
+                                    accuracy={accuracy}
+                                    onRestart={handleRestart}
+                                    onClose={handleCloseModal}
+                                    onBackToHome={handleBackToHome}
                     />
                 )}
             </div>

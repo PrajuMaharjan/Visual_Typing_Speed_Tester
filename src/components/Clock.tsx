@@ -1,8 +1,13 @@
 interface ClockProps{
     elapsed:number;
+    timeRemaining?:number | null;
 }
 
-export default function Clock({elapsed} : ClockProps){
+export default function Clock({elapsed,timeRemaining} : ClockProps){
+    // Only for Timed Mode
+    const isCountdown=timeRemaining !=null;
+    const displaySeconds=isCountdown ? Math.ceil(timeRemaining) : Math.floor(elapsed);
+    
     return(
         <div style= {{
                         display:"inline-flex",
@@ -17,7 +22,7 @@ export default function Clock({elapsed} : ClockProps){
                         minWidth:"90px"
                     }}
         >
-            ⏱ {Math.floor(elapsed)}s
+            ⏱ {displaySeconds}s
         </div>
     );
 }

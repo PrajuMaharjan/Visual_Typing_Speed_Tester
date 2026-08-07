@@ -53,7 +53,7 @@ export default function TestOptionCard({title,subheader,type,primaryLabel,primar
                 <label style={{display:"block",fontSize:"0.85rem",marginBottom:"0.25rem",color:"#444"}}>
                     {primaryLabel}
                 </label>
-                <select value={primaryLabel}
+                <select value={primaryValue}
                         onChange={(e)=>setPrimaryValue(e.target.value)}
                         style={{width:"100%",padding:"0.4rem",fontFamily:"monospace",borderRadius:"6px",border:"1px solid #ccc"}}
                 >
