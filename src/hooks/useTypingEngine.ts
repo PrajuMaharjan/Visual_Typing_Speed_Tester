@@ -1,6 +1,15 @@
 import { useState ,useEffect, useCallback} from "react";
 
-export function useTypingEngine(getText:()=>string){
+interface TypingEngineOptions{
+    durationSeconds?:number;
+    extendText?:()=>string;
+}
+
+const EXTEND_THRESHOLD=30;
+
+export function useTypingEngine(getText:()=>string,options:TypingEngineOptions={}){
+    const {durationSeconds,extendText}=options;
+
     const [typed,setTyped]=useState("");
     const [target,setTarget]=useState<string>(getText);
     const [cursor,setCursor]=useState(0);
@@ -8,7 +17,11 @@ export function useTypingEngine(getText:()=>string){
     const [elapsed,setElapsed]=useState(0);
     const [mistakes,setMistakes]=useState(0);
 
-    const finished=typed === target;  
+    // Parameters for test end
+    const timeUp=durationSeconds != null && elapsed >= durationSeconds;
+    const finished=typed === target || timeUp;
+
+    const timeRemaining=durationSeconds != null ? Math.max(0,durationSeconds - elapsed) : null;
 
     // WPM calculation logic
     const correctChars=[...typed].filter((char,i)=>char===target[i]).length;
@@ -26,6 +39,14 @@ export function useTypingEngine(getText:()=>string){
     const leftMistakes=[...typed.slice(0,cursor)].filter((char,i)=>char !== target[i]).length;
     const rightMistakes=[...typed.slice(cursor)].filter((char,i)=>char !== target[cursor+i]).length;
 
+    function countWords(str:string):number{
+        const trimmed=str.trim();
+        return trimmed.length===0 ? 0 : trimmed.split(/\s+/).length;
+    }
+
+    const totalWordsWritten=countWords(typed);
+    const wordsRemaining=Math.max(0,countWords(target)-countWords(typed));
+
     // Clock stopwatch
     useEffect(()=>{
         if(startTime === null || finished) return;
@@ -37,16 +58,25 @@ export function useTypingEngine(getText:()=>string){
         return ()=>clearInterval(interval);
     },[startTime,finished]);
 
+    function now():number{
+        return Date.now();
+    }
+
     // This function ensures that the mistakes dont count towards words/letters typed
     // When you delete a character, it reduces letter count by 1
     function typeCharacter(char:string){
         if(finished) return;
 
+        // For Timed Mode : Retrieve text once we are close to running out
+        if(extendText && target.length-cursor <= EXTEND_THRESHOLD){
+            setTarget((prev)=>prev+extendText());
+        }
+
         // Shift characters one step right when amending mistake
         if (typed.length>=target.length) return;
 
         if(startTime === null){
-            setStartTime(Date.now());
+            setStartTime(now());
         }
 
         if(char !== target[cursor]){
@@ -56,9 +86,7 @@ export function useTypingEngine(getText:()=>string){
         const newTyped=typed.slice(0,cursor) + char + typed.slice(cursor);
         setTyped(newTyped);
 
-        // Jump the cursor to the end if all mistakes are amended
-        const remainingMistakes=[...newTyped].filter((c,i)=>c!==target[i]).length;
-        setCursor(remainingMistakes===0 ? newTyped.length : cursor+1);
+        setCursor(cursorAfterEdit(newTyped, cursor+1));
     }
 
     function backspace(){
@@ -71,7 +99,14 @@ export function useTypingEngine(getText:()=>string){
         // Delete only the one character to the left
         const newTyped=typed.slice(0,cursor-1)+typed.slice(cursor);
         setTyped(newTyped);
-        setCursor(cursor-1);
+
+        setCursor(cursorAfterEdit(newTyped, cursor-1));
+    }
+
+    // Jump the cursor to the end if all mistakes are amended
+    function cursorAfterEdit(newTyped:string,fallbackCursor:number):number{
+        const remainingMistakes=[...newTyped].filter((c,i)=>c!==target[i]).length;
+        return remainingMistakes===0 ? newTyped.length : fallbackCursor;
     }
 
     function moveCursorLeft(){
@@ -96,6 +131,6 @@ export function useTypingEngine(getText:()=>string){
     },[getText]);
 
     return{
-        target,typed,cursor,elapsed,mistakes,wpm,accuracy,leftMistakes,rightMistakes,finished,typeCharacter,reset,backspace,moveCursorLeft,moveCursorRight
+        target,typed,cursor,elapsed,timeRemaining,mistakes,wpm,accuracy,leftMistakes,rightMistakes,totalWordsWritten,wordsRemaining,finished,typeCharacter,reset,backspace,moveCursorLeft,moveCursorRight
     };
 }

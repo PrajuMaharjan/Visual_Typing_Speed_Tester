@@ -1,13 +1,9 @@
-interface ClockProps{
-    elapsed:number;
-    timeRemaining?:number | null;
+interface WordsStatCounterProps{
+    label:string;
+    value:number;
 }
 
-export default function Clock({elapsed,timeRemaining} : ClockProps){
-    // Only for Timed Mode
-    const isCountdown=timeRemaining !=null;
-    const displaySeconds=isCountdown ? Math.ceil(timeRemaining) : Math.floor(elapsed);
-    
+export default function WordsStatCounter({label,value} : WordsStatCounterProps){
     return(
         <div style= {{
                         display:"inline-flex",
@@ -19,10 +15,10 @@ export default function Clock({elapsed,timeRemaining} : ClockProps){
                         borderRadius:"8px",
                         fontFamily:"monospace",
                         fontSize:"1.1rem",
-                        minWidth:"90px"
+                        minWidth:"90px",
                     }}
         >
-            ⏱ {displaySeconds}s
+            {label} : {value}
         </div>
     );
 }
