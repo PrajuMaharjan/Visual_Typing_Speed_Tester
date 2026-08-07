@@ -11,6 +11,7 @@ import TypingInput from "../components/TypingInput";
 import RestartButton from "../components/RestartButton";
 import MistakesCounter from "../components/MistakesCounter";
 import RemainingMistakesCounter from "../components/RemainingMistakesCounter";
+import WordsStatCounter from "../components/WordStatsCounter";
 import AccuracyCounter from "../components/AccuracyCounter";
 import ResultsModal from "../components/ResultsModal";
 
@@ -25,7 +26,6 @@ export default function TestPage() {
     const length=searchParams.get("length");
     const content=searchParams.get("content");
 
-
     const mode:Mode=content==="text" ? "text" : "words";
     const isTimed=type=="timed";
     const lengthMultiplier=length ? parseInt(length,10) : 1;
@@ -35,6 +35,7 @@ export default function TestPage() {
     const unitLabel=isTimed ? "min" : (lengthMultiplier===1 ? "line" : "lines");
     const modeLabel=isTimed ? "Timed" : "Completion";
     const contenLabelt=content==="text" ? "Text Excerpt" : "Random Words";
+    const wordsStatLabel=isTimed ? "Words Written" : "Words Remaining";
 
     const {text}=useText();
     const {wordBank}=useWords();
@@ -67,7 +68,9 @@ export default function TestPage() {
         return " "+getRandomLines(text,1);
     },[mode,wordBank,text]);
 
-    const {target,leftMistakes,rightMistakes,typed,cursor,accuracy,elapsed,timeRemaining,wpm,finished,mistakes,typeCharacter,backspace,moveCursorLeft,moveCursorRight,reset}=useTypingEngine(getText,isTimed ? {durationSeconds,extendText}:undefined);
+    const {target,leftMistakes,rightMistakes,typed,cursor,accuracy,elapsed,timeRemaining,wpm,finished,mistakes,totalWordsWritten,wordsRemaining,typeCharacter,backspace,moveCursorLeft,moveCursorRight,reset}=useTypingEngine(getText,isTimed ? {durationSeconds,extendText}:undefined);
+
+    const wordsStatValue=isTimed ? totalWordsWritten : wordsRemaining;
 
     const [prevFinished,setPrevFinished]=useState(finished);
     const [showModal,setShowModal]=useState(false);
@@ -106,11 +109,11 @@ export default function TestPage() {
                     }}
         > 
             <div style= {{
-                        maxWidth:"700px",
-                        margin:"0 auto",
-                        padding:"2rem 1rem 4rem",
-                        textAlign:"center",
-                        fontFamily:"sans-serif"
+                            maxWidth:"700px",
+                            margin:"0 auto",
+                            padding:"2rem 1rem 4rem",
+                            textAlign:"center",
+                            fontFamily:"sans-serif"
                         }}
             >
                 <h1>{numberValue} {unitLabel} {modeLabel} Test - {contenLabelt}</h1>
@@ -135,6 +138,9 @@ export default function TestPage() {
 
                     {/* Remaining Mistakes counter */}
                     <RemainingMistakesCounter leftMistakes={leftMistakes} rightMistakes={rightMistakes} />
+
+                    {/* Words written/remaining counter */}
+                    <WordsStatCounter label={wordsStatLabel} value={wordsStatValue} />
 
                 </div>
 

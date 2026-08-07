@@ -39,6 +39,14 @@ export function useTypingEngine(getText:()=>string,options:TypingEngineOptions={
     const leftMistakes=[...typed.slice(0,cursor)].filter((char,i)=>char !== target[i]).length;
     const rightMistakes=[...typed.slice(cursor)].filter((char,i)=>char !== target[cursor+i]).length;
 
+    function countWords(str:string):number{
+        const trimmed=str.trim();
+        return trimmed.length===0 ? 0 : trimmed.split(/\s+/).length;
+    }
+
+    const totalWordsWritten=countWords(typed);
+    const wordsRemaining=Math.max(0,countWords(target)-countWords(typed));
+
     // Clock stopwatch
     useEffect(()=>{
         if(startTime === null || finished) return;
@@ -114,6 +122,6 @@ export function useTypingEngine(getText:()=>string,options:TypingEngineOptions={
     },[getText]);
 
     return{
-        target,typed,cursor,elapsed,timeRemaining,mistakes,wpm,accuracy,leftMistakes,rightMistakes,finished,typeCharacter,reset,backspace,moveCursorLeft,moveCursorRight
+        target,typed,cursor,elapsed,timeRemaining,mistakes,wpm,accuracy,leftMistakes,rightMistakes,totalWordsWritten,wordsRemaining,finished,typeCharacter,reset,backspace,moveCursorLeft,moveCursorRight
     };
 }
