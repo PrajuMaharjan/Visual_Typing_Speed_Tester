@@ -31,6 +31,11 @@ export default function TestPage() {
     const lengthMultiplier=length ? parseInt(length,10) : 1;
     const durationSeconds=isTimed && duration ? parseInt(duration,10)*60 : undefined;
     
+    const numberValue=isTimed ? duration : length;
+    const unitLabel=isTimed ? "min" : (lengthMultiplier===1 ? "line" : "lines");
+    const modeLabel=isTimed ? "Timed" : "Completion";
+    const contenLabelt=content==="text" ? "Text Excerpt" : "Random Words";
+
     const {text}=useText();
     const {wordBank}=useWords();
 
@@ -108,7 +113,7 @@ export default function TestPage() {
                         fontFamily:"sans-serif"
                         }}
             >
-                <h1>Visual Typing Speed Tester</h1>
+                <h1>{numberValue} {unitLabel} {modeLabel} Test - {contenLabelt}</h1>
 
                 <div style={{display:"flex",flexWrap:"wrap",justifyContent:"center",gap:"0.5rem",margin:"1rem 0"}}>
 
