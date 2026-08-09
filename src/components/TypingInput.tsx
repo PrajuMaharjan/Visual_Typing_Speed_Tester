@@ -1,5 +1,5 @@
 import { useEffect, useRef} from "react";
-import type {KeyboardEvent,MouseEvent } from "react";
+import type {KeyboardEvent,MouseEvent,ChangeEvent } from "react";
 
 interface TypingInputProps{
     typed:string;
@@ -38,6 +38,10 @@ export default function TypingInput({typed,target,cursor,onType,onBackspace,onMo
         // Allowed keys for browser shortcuts
         if(e.ctrlKey || e.metaKey || e.altKey) return;
 
+        if(e.key==="Unidentified"){
+            return;
+        }
+
         if(e.key==="ArrowLeft"){
             e.preventDefault();
             onMoveLeft();
@@ -63,6 +67,14 @@ export default function TypingInput({typed,target,cursor,onType,onBackspace,onMo
 
         e.preventDefault();
         onType(e.key);
+    }
+
+    function handleChange(e:ChangeEvent<HTMLInputElement>){
+        if(e.target.value.length > typed.length){
+            onType(e.target.value[e.target.value.length-1]);
+        }else if(e.target.value.length<typed.length){
+            onBackspace();
+        }
     }
 
     function disabledMouseClick(e:MouseEvent<HTMLInputElement>){
@@ -107,10 +119,11 @@ export default function TypingInput({typed,target,cursor,onType,onBackspace,onMo
             <input  ref={inputRef}
                     value={typed}
                     placeholder="Type here"
-                    onChange={()=>{}}
+                    onChange={handleChange}
                     onKeyDown={handleKeyDown}
                     onMouseDown={disabledMouseClick}
                     autoFocus
+                    autoCapitalize="off"
                     disabled={disabled}
                     style = {{
                             display:"block",
