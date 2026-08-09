@@ -1,3 +1,102 @@
-# Visual_Typing_Speed_Tester
+# Visual Typing Speed Tester
 
-Generate public/words.txt and public/text.txt yourself
+A typing speed test built with React, TypeScript, and Vite. Type against
+random words or real text excerpts, in either a timed or completion-based
+mode, and see live stats as you go.
+
+## Features
+
+- **Two test modes**
+  - **Timed** — type for as long as the clock runs. Text is generated in
+    chunks and silently extended as you approach the end, so you never hit
+    a hard stop before time's up.
+  - **Completion** — type until you finish a fixed amount of content
+    (scalable by a length multiplier), then the test ends automatically.
+- **Two content sources**
+  - **Random Words** — pulled from a word bank.
+  - **Text Excerpt** — real passages, one random excerpt (or several lines,
+    depending on mode) pulled per test.
+- **Live stats while typing**
+  - WPM (words per minute)
+  - Accuracy percentage
+  - Mistake count, plus a left/right breakdown of remaining mistakes
+  - Words written / words remaining (label switches depending on mode)
+  - Clock — counts down in Timed mode, counts up in Completion mode
+- **Results modal** on test completion, showing final WPM, time, mistakes,
+  and accuracy, with options to restart or return home.
+- **Responsive layout** — stat rows use CSS Grid/Flexbox with no fixed
+  minimum widths, so the interface scales down to phone-width screens
+  without overflowing or overlapping. The stat area is sticky, so it stays
+  visible above the on-screen keyboard while typing on mobile.
+- **Mobile typing support** — typing works correctly with on-screen mobile
+  keyboards (handles the `"Unidentified"` key-reporting quirk some mobile
+  browsers have), and auto-capitalization of the first typed character is
+  disabled so it doesn't fight against lowercase test content.
+
+## Tech stack
+
+- **React + TypeScript**, scaffolded with **Vite**
+- **React Router** (`react-router-dom`) for client-side routing between the
+  landing page and the test page
+- **React Compiler** — enabled; note that it flags impure calls
+  (`Date.now()`, `Math.random()`) written directly in component/hook
+  bodies, even when only called from event handlers. See `useTypingEngine.ts`
+  for the established workaround pattern (wrap the call in a small
+  module-scope helper function).
+- Deployed on **Vercel**, with a rewrite rule in `vercel.json` so
+  client-side routes (e.g. `/test`) don't 404 on direct navigation/refresh.
+
+## Getting started
+
+```bash
+npm install
+npm run dev
+```
+
+This starts the Vite dev server (defaults to `http://localhost:5173`).
+
+To test on a phone or another device on your local network without
+deploying:
+
+```bash
+npm run dev -- --host
+```
+
+Vite will print a network URL (e.g. `http://192.168.x.x:5173`) — open that
+on any device connected to the same Wi-Fi network.
+
+### Build
+
+```bash
+npm run build
+```
+
+## Project structure
+
+```
+src/
+├── components/     UI building blocks (counters, buttons, modal, etc.)
+├── constants/       Shared constants (e.g. base word count)
+├── hooks/            Core logic — typing engine, word bank, text loading
+├── pages/            LandingPage and TestPage (routed views)
+├── App.tsx           Router config
+└── main.tsx          App entry point
+
+public/
+├── words.txt         Word bank used for Random Words mode
+├── text.txt           Text excerpts, one per line (gitignored)
+
+vercel.json           Deployment rewrite rules
+```
+
+## Routes
+
+| Route   | Page          | Notes                                              |
+|---------|---------------|-----------------------------------------------------|
+| `/`     | LandingPage   | Choose test type, content source, and options       |
+| `/test` | TestPage      | Reads `type`, `duration`/`length`, and `content` query params |
+
+## Status
+
+Actively in development. Mobile responsiveness and mobile typing support
+are complete. Planned next: light/dark mode theming.
