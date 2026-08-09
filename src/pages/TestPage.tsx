@@ -119,29 +119,33 @@ export default function TestPage() {
             >
                 <h1>{numberValue} {unitLabel} {modeLabel} Test - {contenLabelt}</h1>
 
-                <div style={{display:"flex",flexWrap:"wrap",justifyContent:"center",gap:"0.5rem",margin:"1rem 0"}}>
+                <div style={{position:"sticky",top:0,zIndex:10,backgroundColor:'#eaf7ec',paddingBottom:'0.5rem'}}>
 
-                    {/* Le clock */}
-                    <Clock elapsed={elapsed} timeRemaining={timeRemaining} />
+                    <div style={{display:"grid",gridTemplateColumns:"repeat(4,minmax(0,1fr))",gap:"0.5rem",margin:"1rem 0"}}>
 
-                    {/* Words per minute counter */}
-                    <WPMCounter wpm={wpm} />
+                        {/* Le clock */}
+                        <Clock elapsed={elapsed} timeRemaining={timeRemaining} />
 
-                    {/* Mistake counter */}
-                    <MistakesCounter mistakes={mistakes} />
+                        {/* Words per minute counter */}
+                        <WPMCounter wpm={wpm} />
 
-                    {/* Accuracy counter */}
-                    <AccuracyCounter accuracy={accuracy} />
-                
-                </div>
+                        {/* Mistake counter */}
+                        <MistakesCounter mistakes={mistakes} />
 
-                <div style={{display:"flex",flexWrap:"wrap",justifyContent:"center",gap:"0.5rem",margin:"1rem 0"}}>
+                        {/* Accuracy counter */}
+                        <AccuracyCounter accuracy={accuracy} />
+                    
+                    </div>
 
-                    {/* Remaining Mistakes counter */}
-                    <RemainingMistakesCounter leftMistakes={leftMistakes} rightMistakes={rightMistakes} />
+                    <div style={{display:"flex",flexWrap:"wrap",justifyContent:"center",gap:"0.5rem",margin:"1rem 0"}}>
+                        
+                        {/* Remaining Mistakes counter */}
+                        <RemainingMistakesCounter leftMistakes={leftMistakes} rightMistakes={rightMistakes} />
 
-                    {/* Words written/remaining counter */}
-                    <WordsStatCounter label={wordsStatLabel} value={wordsStatValue} />
+                        {/* Words written/remaining counter */}
+                        <WordsStatCounter label={wordsStatLabel} value={wordsStatValue} />
+
+                    </div>
 
                 </div>
 
@@ -164,6 +168,7 @@ export default function TestPage() {
                     {/* Restart Button */}
                     <RestartButton onClick={handleRestart} />
                     
+                    {/* Button that navigates back to home */}
                     <BackButton onClick={handleBackToHome} />
                     
                 </div>
