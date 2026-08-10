@@ -29,18 +29,18 @@ export default function WordDisplay({target,typed,cursor} : WordDisplayProps){
                       }}
           >
             {[...target].map((char,i)=>{
-              let color="black";
+              let color="var(--color-pending)";
               let textDecoration="none";
 
               if(i<typed.length){
                 const isPending=!lengthMatch && i>=cursor;
                 if(isPending){
-                  color="black";
+                  color="var(--color-pending)";
                 }else if(typed[i] === char){
-                  color="green";
+                  color="var(--color-correct)";
                   textDecoration="line-through";
                 } else{
-                  color="red";
+                  color="var(--color-mistake)";
               }
             }
               
@@ -59,7 +59,7 @@ export default function WordDisplay({target,typed,cursor} : WordDisplayProps){
                           top:0,
                           bottom:0,
                           width:"2px",
-                          backgroundColor:"#333"
+                          backgroundColor:"var(--color-text)"
                         }}
             />
       

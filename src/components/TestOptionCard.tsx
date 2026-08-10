@@ -39,23 +39,25 @@ export default function TestOptionCard({title,subheader,type,primaryLabel,primar
         <div style={{
                         flex:"1 1 240px",
                         maxWidth:"320px",
-                        border:"1px solid #ccc",
+                        border:"1px solid var(--color-border)",
                         borderRadius:"12px",
                         padding:"1.5rem",
                         textAlign:"center",
                         fontFamily:'monospace',
+                        color:"var(--color-text)"
                     }}
         >
             <h2 style={{margin:"0 0 0.5rem"}}>{title}</h2>
             
-            <p style={{margin:"0 0 1.25rem",color:"#666",fontSize:"0.95rem"}}>{subheader}</p>
+            <p style={{margin:"0 0 1.25rem",color:"var(--color-text-muted)",fontSize:"0.95rem"}}>{subheader}</p>
+
             <div style={{marginBottom:"0.75rem",textAlign:"left"}}>
-                <label style={{display:"block",fontSize:"0.85rem",marginBottom:"0.25rem",color:"#444"}}>
+                <label style={{display:"block",fontSize:"0.85rem",marginBottom:"0.25rem",color:"var(-color-text-muted)"}}>
                     {primaryLabel}
                 </label>
                 <select value={primaryValue}
                         onChange={(e)=>setPrimaryValue(e.target.value)}
-                        style={{width:"100%",padding:"0.4rem",fontFamily:"monospace",borderRadius:"6px",border:"1px solid #ccc"}}
+                        style={{width:"100%",padding:"0.4rem",fontFamily:"monospace",borderRadius:"6px",border:"1px solid var(--color-border)",backgroundColor:"var(--color-surface)",color:"var(--color-text)"}}
                 >
                     {primaryOptions.map((opt)=>(
                         <option key={opt.value} value={opt.value}>{opt.label}</option>
@@ -64,7 +66,7 @@ export default function TestOptionCard({title,subheader,type,primaryLabel,primar
             </div>
 
             <div style={{marginBottom:"1.25rem",textAlign:"left"}}>
-                <label style={{display:"block",fontSize:"0.85rem",marginBottom:"0.25rem",color:"#444"}}>
+                <label style={{display:"block",fontSize:"0.85rem",marginBottom:"0.25rem",color:"var(--color-text-muted)"}}>
                     Content
                 </label>
                 <select value={contentValue}
@@ -74,7 +76,9 @@ export default function TestOptionCard({title,subheader,type,primaryLabel,primar
                                     padding:"0.4rem",
                                     fontFamily:"monospace",
                                     borderRadius:"6px",
-                                    border:"1px solid #ccc"
+                                    border:"1px solid var(--color-border)",
+                                    backgroundColor:'var(--color-surface)',
+                                    color:"var(--color-text)",
                                 }}
                 >
                     {CONTENT_OPTIONS.map((opt)=>(
@@ -90,8 +94,8 @@ export default function TestOptionCard({title,subheader,type,primaryLabel,primar
                                 padding:"0.6rem 1rem",
                                 borderRadius:"8px",
                                 border:"none",
-                                backgroundColor:"#333",
-                                color:"#fff",
+                                backgroundColor:"var(--color-button-primary-bg)",
+                                color:"var(--color-button-primary-text)",
                                 fontFamily:"monospace",
                                 fontSize:"1rem",
                                 cursor:"pointer"

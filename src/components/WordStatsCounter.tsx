@@ -11,11 +11,12 @@ export default function WordsStatCounter({label,value} : WordsStatCounterProps){
                         justifyContent:"center",
                         padding:"0.5rem 1.25rem",
                         margin:"0 0.5rem",
-                        border:"1px solid #ccc",
+                        border:"1px solid var(--color-border)",
                         borderRadius:"8px",
                         fontFamily:"monospace",
                         fontSize:"1.1rem",
                         minWidth:"90px",
+                        color:"var(--color-text)"
                     }}
         >
             {label} : {value}

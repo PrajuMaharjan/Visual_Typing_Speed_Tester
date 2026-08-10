@@ -4,8 +4,9 @@ import cat from "../../assets/images/cat.gif";
 export default function LandingPage() {
     return (
         <div style= {{
-                    minHeight:"100vh",
-                    backgroundColor:"#eaf7ec"
+                        minHeight:"100vh",
+                        backgroundColor:"var(--color-bg)",
+                        color:"var(--color-text)"
                     }}
         >
             <div style={{

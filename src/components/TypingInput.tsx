@@ -99,11 +99,11 @@ export default function TypingInput({typed,target,cursor,onType,onBackspace,onMo
                 
                 let color : string;
                 if(isPending){
-                    color="black";
+                    color="var(--color-pending)";
                 }else if(isCorrect){
-                    color="green";
+                    color="var(--color-correct)";
                 }else{
-                    color="red";
+                    color="var(--color-mistake)";
                 }
 
                 return(
@@ -134,10 +134,12 @@ export default function TypingInput({typed,target,cursor,onType,onBackspace,onMo
                             fontFamily:"monospace",
                             fontSize:"1.5rem",
                             textAlign:'left',
-                            border:"2px solid #ccc",
+                            border:"2px solid var(--color-border)",
                             borderRadius:"8px",
                             outline:"none",
                             boxSizing:"border-box",
+                            backgroundColor:"var(--color-surface)",
+                            color:"var(--color-text)"
                             }}
             />
         </div>

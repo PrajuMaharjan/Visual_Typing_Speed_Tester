@@ -13,12 +13,12 @@ export default function RemainingMistakesCounter({leftMistakes,rightMistakes} : 
                         justifyContent:"center",
                         padding:"0.5rem 1.25rem",
                         margin:"0 0.5rem",
-                        border:"1px solid #ccc",
+                        border:"1px solid var(--color-border)",
                         borderRadius:"8px",
                         fontFamily:"monospace",
                         fontSize:"1.1rem",
                         minWidth:"200px",
-                        color:hasMistakes ? "red" : "inherit"
+                        color:hasMistakes ? "var(--color-mistake)" : "var(--color-text)"
                     }}
         >
             Remaining Mistakes : 🢘 {leftMistakes} | {rightMistakes} 🢚
