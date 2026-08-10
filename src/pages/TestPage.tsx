@@ -18,7 +18,11 @@ import ResultsModal from "../components/ResultsModal";
 
 type Mode = "words" | "text";
 
-export default function TestPage() {
+interface TestPageProps{
+    playKeySound:(isMistake?:boolean)=>void;
+}
+
+export default function TestPage({playKeySound} : TestPageProps) {
     const [searchParams]=useSearchParams();
     const navigate=useNavigate();
 
@@ -162,6 +166,7 @@ export default function TestPage() {
                                 onMoveLeft={moveCursorLeft}
                                 onMoveRight={moveCursorRight}
                                 disabled={finished}
+                                playKeySound={playKeySound}
                 />
 
                 <div style={{marginTop:"2.5rem",display:"flex",justifyContent:'center',gap:'0.75rem'}}>
