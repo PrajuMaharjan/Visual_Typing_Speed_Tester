@@ -10,9 +10,10 @@ interface TypingInputProps{
     onMoveLeft:()=>void;
     onMoveRight:()=>void;
     disabled:boolean;
+    playKeySound:(isMistake?:boolean)=>void;
 }
 
-export default function TypingInput({typed,target,cursor,onType,onBackspace,onMoveLeft,onMoveRight,disabled} : TypingInputProps){
+export default function TypingInput({typed,target,cursor,onType,onBackspace,onMoveLeft,onMoveRight,disabled,playKeySound} : TypingInputProps){
     const inputRef=useRef<HTMLInputElement>(null);
 
     // take over default browser type events with custom event
@@ -56,6 +57,7 @@ export default function TypingInput({typed,target,cursor,onType,onBackspace,onMo
 
         if(e.key==="Backspace"){
             e.preventDefault();
+            playKeySound(false);
             onBackspace();
             return;
         }
@@ -66,13 +68,19 @@ export default function TypingInput({typed,target,cursor,onType,onBackspace,onMo
         }
 
         e.preventDefault();
+        const isMistake=e.key !== target[cursor];
+        playKeySound(isMistake);
         onType(e.key);
     }
 
     function handleChange(e:ChangeEvent<HTMLInputElement>){
         if(e.target.value.length > typed.length){
-            onType(e.target.value[e.target.value.length-1]);
+            const typedChar=e.target.value[e.target.value.length-1];
+            const isMistake=typedChar !== target[cursor];
+            playKeySound(isMistake);
+            onType(typedChar);
         }else if(e.target.value.length<typed.length){
+            playKeySound(false);
             onBackspace();
         }
     }
