@@ -32,6 +32,12 @@ mode, and see live stats as you go.
   keyboards (handles the `"Unidentified"` key-reporting quirk some mobile
   browsers have), and auto-capitalization of the first typed character is
   disabled so it doesn't fight against lowercase test content.
+- **Light Mode / Dark Mode** — sticky toggle in the top-right corner,
+  visible on every page. Built with CSS custom properties (no theming
+  library): a light and dark palette are each defined once in `theme.css`,
+  and every component reads its colors from those shared variables instead
+  of hardcoding them. Your choice is saved to `localStorage`, so it's
+  remembered across page reloads and future visits.
 
 ## Tech stack
 
@@ -43,6 +49,9 @@ mode, and see live stats as you go.
   bodies, even when only called from event handlers. See `useTypingEngine.ts`
   for the established workaround pattern (wrap the call in a small
   module-scope helper function).
+- **Theming** — plain CSS custom properties (`--color-*` variables) toggled
+  via a `data-theme` attribute on `<html>`, managed by a small `useTheme`
+  hook. No CSS-in-JS or theming library involved.
 - Deployed on **Vercel**, with a rewrite rule in `vercel.json` so
   client-side routes (e.g. `/test`) don't 404 on direct navigation/refresh.
 
@@ -75,11 +84,14 @@ npm run build
 
 ```
 src/
-├── components/     UI building blocks (counters, buttons, modal, etc.)
+├── components/     UI building blocks (counters, buttons, modal,
+│                    ThemeToggle, etc.)
 ├── constants/       Shared constants (e.g. base word count)
-├── hooks/            Core logic — typing engine, word bank, text loading
+├── hooks/            Core logic — typing engine, word bank, text loading,
+│                      theme state (useTheme)
 ├── pages/            LandingPage and TestPage (routed views)
-├── App.tsx           Router config
+├── styles/           App.css and theme.css (light/dark color variables)
+├── App.tsx           Router config, renders ThemeToggle above all routes
 └── main.tsx          App entry point
 
 public/
@@ -98,5 +110,6 @@ vercel.json           Deployment rewrite rules
 
 ## Status
 
-Actively in development. Mobile responsiveness and mobile typing support
-are complete. Planned next: light/dark mode theming.
+Actively in development. Mobile responsiveness, mobile typing support, and
+light/dark mode are complete. Planned next: typing replay, a mistakes
+log/graph, and a leaderboard.
