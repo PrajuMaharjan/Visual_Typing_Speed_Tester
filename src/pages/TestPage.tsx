@@ -106,7 +106,8 @@ export default function TestPage() {
     return (
         <div style={{
                         minHeight:"100vh",
-                        backgroundColor:'#eaf7ec'
+                        backgroundColor:'var(--color-bg)',
+                        color:"var(--color-text)"
                     }}
         > 
             <div style= {{
@@ -119,7 +120,7 @@ export default function TestPage() {
             >
                 <h1>{numberValue} {unitLabel} {modeLabel} Test - {contenLabelt}</h1>
 
-                <div style={{position:"sticky",top:0,zIndex:10,backgroundColor:'#eaf7ec',paddingBottom:'0.5rem'}}>
+                <div style={{position:"sticky",top:0,zIndex:10,backgroundColor:'var(--color-bg)',paddingBottom:'0.5rem'}}>
 
                     <div style={{display:"grid",gridTemplateColumns:"repeat(4,minmax(0,1fr))",gap:"0.5rem",margin:"1rem 0"}}>
 

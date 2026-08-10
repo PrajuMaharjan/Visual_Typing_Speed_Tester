@@ -25,14 +25,15 @@ export default function ResultsModal({wpm,elapsedSeconds,accuracy,mistakes,onRes
         >
             <div style={{
                             position:"relative",
-                            backgroundColor:"#fff",
+                            backgroundColor:"var(--color-surface)",
                             borderRadius:"12px",
                             padding:"2rem",
                             width:"90%",
                             maxWidth:"400px",
                             textAlign:"center",
                             fontFamily:"monospace",
-                            boxShadow:"0 4px 20px rgba(0,0,0,0.2)"
+                            boxShadow:"0 4px 20px rgba(0,0,0,0.2)",
+                            color:"var(--color-text)"
                         }}
             >
                 <button onClick={onClose}
@@ -46,7 +47,7 @@ export default function ResultsModal({wpm,elapsedSeconds,accuracy,mistakes,onRes
                                     fontSize:"1.25rem",
                                     cursor:"pointer",
                                     lineHeight:1,
-                                    color:"#555",
+                                    color:"var(--color-text-muted)",
                         }}
                 >
                     ✕
@@ -64,7 +65,7 @@ export default function ResultsModal({wpm,elapsedSeconds,accuracy,mistakes,onRes
                                 gap:"1.5rem",
                                 margin:"1.5rem 0",
                                 fontSize:"1rem",
-                                color:"#333"
+                                color:"var(--color-text)"
                             }}
                 >
                     <div style={{textAlign:"center",minWidth:"70px"}}>Time : <br/><strong>{Math.floor(elapsedSeconds)}s</strong></div>
@@ -81,8 +82,8 @@ export default function ResultsModal({wpm,elapsedSeconds,accuracy,mistakes,onRes
                                         padding:"0.6rem 1.25rem",
                                         borderRadius:"8px",
                                         border:"none",
-                                        backgroundColor:"#333",
-                                        color:"#fff",
+                                        backgroundColor:"var(--color-button-primary-bg)",
+                                        color:"var(--color-button-primary-text)",
                                         fontFamily:"monospace",
                                         fontSize:"1rem",
                                         cursor:"pointer",
@@ -96,9 +97,9 @@ export default function ResultsModal({wpm,elapsedSeconds,accuracy,mistakes,onRes
                             style={{
                                         padding:"0.6rem 1.25rem",
                                         borderRadius:"8px",
-                                        border:"1px solid #ccc",
-                                        backgroundColor:"#fff",
-                                        color:"#333",
+                                        border:"1px solid var(--color-button-secondary-border)",
+                                        backgroundColor:"var(--color-button-secondary-bg)",
+                                        color:"var(--color-button-secondary-text)",
                                         fontFamily:"monospace",
                                         fontSize:"1rem",
                                         cursor:"pointer",

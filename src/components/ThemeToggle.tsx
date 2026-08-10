@@ -15,7 +15,7 @@ export default function ThemeToggle({theme,onToggle}:ThemeToggleProps){
                             padding:'0.5rem 0.75rem',
                             border:'1px solid var(--color-border)',
                             borderRadius:'8px',
-                            backgroundColor:'var(--color-surface)',
+                            backgroundColor:'var(--color-bg)',
                             color:'var(--color-text)',
                             fontFamily:'monospace',
                             fontSize:"1rem",
