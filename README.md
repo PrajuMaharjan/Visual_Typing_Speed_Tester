@@ -38,6 +38,12 @@ mode, and see live stats as you go.
   and every component reads its colors from those shared variables instead
   of hardcoding them. Your choice is saved to `localStorage`, so it's
   remembered across page reloads and future visits.
+- **Mechanical keyboard sound** — a synthesized click plays on every
+  keystroke while typing (no audio files — generated on the fly with the
+  Web Audio API), with a distinct lower/harsher tone for mistakes versus
+  correct keystrokes. Toggleable via a sticky speaker button next to the
+  theme toggle; the choice is remembered across reloads the same way the
+  theme is.
 
 ## Tech stack
 
@@ -48,10 +54,13 @@ mode, and see live stats as you go.
   (`Date.now()`, `Math.random()`) written directly in component/hook
   bodies, even when only called from event handlers. See `useTypingEngine.ts`
   for the established workaround pattern (wrap the call in a small
-  module-scope helper function).
+  module-scope helper function). The same pattern is reused in `useSound.ts`
+  for its `AudioContext`/oscillator calls.
 - **Theming** — plain CSS custom properties (`--color-*` variables) toggled
   via a `data-theme` attribute on `<html>`, managed by a small `useTheme`
   hook. No CSS-in-JS or theming library involved.
+- **Sound** — synthesized in-browser via the Web Audio API (`useSound`
+  hook); no audio asset files or sound libraries.
 - Deployed on **Vercel**, with a rewrite rule in `vercel.json` so
   client-side routes (e.g. `/test`) don't 404 on direct navigation/refresh.
 
@@ -85,13 +94,14 @@ npm run build
 ```
 src/
 ├── components/     UI building blocks (counters, buttons, modal,
-│                    ThemeToggle, etc.)
+│                    ThemeToggle, SoundToggle, etc.)
 ├── constants/       Shared constants (e.g. base word count)
 ├── hooks/            Core logic — typing engine, word bank, text loading,
-│                      theme state (useTheme)
+│                      theme state (useTheme), sound (useSound)
 ├── pages/            LandingPage and TestPage (routed views)
 ├── styles/           App.css and theme.css (light/dark color variables)
-├── App.tsx           Router config, renders ThemeToggle above all routes
+├── App.tsx           Router config, renders ThemeToggle and SoundToggle
+│                      above all routes
 └── main.tsx          App entry point
 
 public/
@@ -110,6 +120,6 @@ vercel.json           Deployment rewrite rules
 
 ## Status
 
-Actively in development. Mobile responsiveness, mobile typing support, and
-light/dark mode are complete. Planned next: typing replay, a mistakes
+Actively in development. Mobile responsiveness, mobile typing support,
+light/dark mode, and keyboard sound are complete. Planned next: a mistakes
 log/graph, and a leaderboard.
