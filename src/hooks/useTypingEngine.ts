@@ -5,6 +5,13 @@ interface TypingEngineOptions{
     extendText?:()=>string;
 }
 
+export interface MistakeEntry{
+    index:number;
+    expected:string;
+    typed:string;
+    time:number;
+}
+
 const EXTEND_THRESHOLD=30;
 
 export function useTypingEngine(getText:()=>string,options:TypingEngineOptions={}){
@@ -16,6 +23,7 @@ export function useTypingEngine(getText:()=>string,options:TypingEngineOptions={
     const [startTime,setStartTime]=useState<number | null>(null);
     const [elapsed,setElapsed]=useState(0);
     const [mistakes,setMistakes]=useState(0);
+    const [mistakeLog,setMistakeLog]=useState<MistakeEntry[]>([]);
 
     // Parameters for test end
     const timeUp=durationSeconds != null && elapsed >= durationSeconds;
@@ -75,12 +83,21 @@ export function useTypingEngine(getText:()=>string,options:TypingEngineOptions={
         // Shift characters one step right when amending mistake
         if (typed.length>=target.length) return;
 
+        const currentTime=now(); // For mistakes log
+        const timeDuringStart=startTime===null ? currentTime : startTime;
+
         if(startTime === null){
-            setStartTime(now());
+            setStartTime(currentTime);
         }
 
         if(char !== target[cursor]){
             setMistakes((m) => m+1);
+            setMistakeLog((log)=>[...log,{
+                index:cursor,
+                expected:target[cursor],
+                typed:char,
+                time:(currentTime-timeDuringStart)/1000
+            }]);
         }
 
         const newTyped=typed.slice(0,cursor) + char + typed.slice(cursor);
@@ -128,9 +145,10 @@ export function useTypingEngine(getText:()=>string,options:TypingEngineOptions={
         setStartTime(null);
         setElapsed(0);
         setMistakes(0);
+        setMistakeLog([]);
     },[getText]);
 
     return{
-        target,typed,cursor,elapsed,timeRemaining,mistakes,wpm,accuracy,leftMistakes,rightMistakes,totalWordsWritten,wordsRemaining,finished,typeCharacter,reset,backspace,moveCursorLeft,moveCursorRight
+        target,typed,cursor,elapsed,timeRemaining,mistakes,mistakeLog,wpm,accuracy,leftMistakes,rightMistakes,totalWordsWritten,wordsRemaining,finished,typeCharacter,reset,backspace,moveCursorLeft,moveCursorRight
     };
 }

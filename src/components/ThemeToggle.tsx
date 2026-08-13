@@ -13,7 +13,7 @@ export default function ThemeToggle({theme,onToggle}:ThemeToggleProps){
                             float:'right',
                             marginRight:'1rem',
                             padding:'0.5rem 0.75rem',
-                            border:'1px solid var(--color-border)',
+                            border:'3px solid var(--color-border)',
                             borderRadius:'8px',
                             backgroundColor:'var(--color-bg)',
                             color:'var(--color-text)',
