@@ -1,57 +1,51 @@
-interface ResultsModalProps{
-    wpm:number;
-    elapsedSeconds:number;
-    accuracy:number;
-    mistakes:number;
-    onRestart:()=>void;
-    onClose:()=>void;
-    onBackToHome:()=>void;
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import MistakesLog from "../components/MistakesLog";
+import type { ResultsData } from "../hooks/useTypingEngine";
+
+interface ResultsPageProps{
+    results:ResultsData | null;
 }
 
-export default function ResultsModal({wpm,elapsedSeconds,accuracy,mistakes,onRestart,onClose,onBackToHome} : ResultsModalProps){
+export default function ResultsPage({results} : ResultsPageProps){
+    const navigate=useNavigate();
+
+    // Navigates to gome page if someone directly enters this page without any results data
+    useEffect(()=>{
+        if(!results){
+            navigate("/");
+        }
+    },[results,navigate]);
+
+    if(!results){
+        return null;
+    }
+
+    const {wpm,elapsedSeconds,accuracy,mistakes,mistakeLog,testSearch}=results;
+
+    function handleRestart(){
+        navigate(`/test${testSearch}`);
+    }
+
+    function handleBackToHome(){
+        navigate("/");
+    }
+
     return(
         <div style= {{
-                        position:"fixed",
-                        top:0,
-                        left:0,
-                        right:0,
-                        bottom:0,
-                        backgroundColor:"rgba(0,0,0,0.5)",
-                        display:"flex",
-                        alignItems:"center",
-                        justifyContent:"center",
-                        zIndex:1000,
+                        minHeight:"100vh",
+                        backgroundColor:"var(--color-bg)",
+                        color:"var(--color-text)"
                     }}
         >
             <div style={{
-                            position:"relative",
-                            backgroundColor:"var(--color-surface)",
-                            borderRadius:"12px",
-                            padding:"2rem",
-                            width:"90%",
+                            padding:"3rem 1rem 4rem",
                             maxWidth:"400px",
+                            margin:"0 auto",
                             textAlign:"center",
                             fontFamily:"monospace",
-                            boxShadow:"0 4px 20px rgba(0,0,0,0.2)",
-                            color:"var(--color-text)"
                         }}
             >
-                <button onClick={onClose}
-                        aria-label="Close"
-                        style={{
-                                    position:"absolute",
-                                    top:"0.75rem",
-                                    right:"0.75rem",
-                                    background:"none",
-                                    border:"none",
-                                    fontSize:"1.25rem",
-                                    cursor:"pointer",
-                                    lineHeight:1,
-                                    color:"var(--color-text-muted)",
-                        }}
-                >
-                    ✕
-                </button>
 
                 {/* Main stat : WPM */}
                 <div style={{fontSize:"3rem",fontWeight:"bold",margin:"0.5rem 0"}}>
@@ -77,7 +71,7 @@ export default function ResultsModal({wpm,elapsedSeconds,accuracy,mistakes,onRes
                 <div style={{display:"flex",justifyContent:"center",gap:"1rem",marginTop:"1.5rem"}}>
                     
                     {/* Restart button */}
-                    <button onClick={onRestart}
+                    <button onClick={handleRestart}
                             style={{
                                         padding:"0.6rem 1.25rem",
                                         borderRadius:"8px",
@@ -93,7 +87,7 @@ export default function ResultsModal({wpm,elapsedSeconds,accuracy,mistakes,onRes
                     </button>
 
                     {/* Back to Home button */}
-                    <button onClick={onBackToHome}
+                    <button onClick={handleBackToHome}
                             style={{
                                         padding:"0.6rem 1.25rem",
                                         borderRadius:"8px",
@@ -109,6 +103,9 @@ export default function ResultsModal({wpm,elapsedSeconds,accuracy,mistakes,onRes
                     </button>
 
                 </div>
+
+                {/* Mistakes log */}
+                <MistakesLog mistakeLog={mistakeLog} elapsedSeconds={elapsedSeconds} />
             </div>
         </div>
     );

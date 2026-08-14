@@ -1,6 +1,7 @@
-import { useState,useEffect,useCallback } from "react";
+import { useEffect,useCallback } from "react";
 import {useSearchParams,useNavigate} from "react-router-dom";
 import { useTypingEngine } from "../hooks/useTypingEngine";
+import type { ResultsData } from "../hooks/useTypingEngine";
 import {useText,getRandomLines} from"../hooks/useText";
 import { useWords,generateWords } from "../hooks/useWords";
 import Clock from "../components/Clock";
@@ -14,15 +15,15 @@ import MistakesCounter from "../components/MistakesCounter";
 import RemainingMistakesCounter from "../components/RemainingMistakesCounter";
 import WordsStatCounter from "../components/WordStatsCounter";
 import AccuracyCounter from "../components/AccuracyCounter";
-import ResultsModal from "../components/ResultsModal";
 
 type Mode = "words" | "text";
 
 interface TestPageProps{
     playKeySound:(isMistake?:boolean)=>void;
+    onFinish:(results:ResultsData)=>void;
 }
 
-export default function TestPage({playKeySound} : TestPageProps) {
+export default function TestPage({playKeySound,onFinish} : TestPageProps) {
     const [searchParams]=useSearchParams();
     const navigate=useNavigate();
 
@@ -41,6 +42,8 @@ export default function TestPage({playKeySound} : TestPageProps) {
     const modeLabel=isTimed ? "Timed" : "Completion";
     const contenLabelt=content==="text" ? "Text Excerpt" : "Random Words";
     const wordsStatLabel=isTimed ? "Words Written" : "Words Remaining";
+
+    const testSearch=searchParams.toString() ? `?${searchParams.toString()}` : "";
 
     const {text}=useText();
     const {wordBank}=useWords();
@@ -73,21 +76,17 @@ export default function TestPage({playKeySound} : TestPageProps) {
         return " "+getRandomLines(text,1);
     },[mode,wordBank,text]);
 
-    const {target,leftMistakes,rightMistakes,typed,cursor,accuracy,elapsed,timeRemaining,wpm,finished,mistakes,totalWordsWritten,wordsRemaining,typeCharacter,backspace,moveCursorLeft,moveCursorRight,reset}=useTypingEngine(getText,isTimed ? {durationSeconds,extendText}:undefined);
+    const {target,leftMistakes,rightMistakes,typed,cursor,accuracy,elapsed,timeRemaining,wpm,finished,mistakes,mistakeLog,totalWordsWritten,wordsRemaining,typeCharacter,backspace,moveCursorLeft,moveCursorRight,reset}=useTypingEngine(getText,isTimed ? {durationSeconds,extendText}:undefined);
 
     const wordsStatValue=isTimed ? totalWordsWritten : wordsRemaining;
 
-    const [prevFinished,setPrevFinished]=useState(finished);
-    const [showModal,setShowModal]=useState(false);
-
-    // Show the ResultsModal once the user has written all text correctly
-    if(finished !== prevFinished){
-        setPrevFinished(finished);
-        
+    // Navigate to ResultsPage with the test results
+    useEffect(()=>{
         if(finished){
-            setShowModal(true);
+            onFinish({wpm,elapsedSeconds:elapsed,accuracy,mistakes,mistakeLog,testSearch});
+            navigate("/results");
         }
-    }
+    },[finished,wpm,elapsed,accuracy,mistakes,mistakeLog,testSearch,navigate,onFinish]);
 
     // Generates either words from either words.ts or text from text.txt on the first render or when mode is changed
     useEffect(()=>{
@@ -96,11 +95,6 @@ export default function TestPage({playKeySound} : TestPageProps) {
 
     function handleRestart(){
         reset();
-        setShowModal(false);
-    }
-
-    function handleCloseModal(){
-        setShowModal(false);
     }
 
     function handleBackToHome(){
@@ -178,18 +172,6 @@ export default function TestPage({playKeySound} : TestPageProps) {
                     <BackButton onClick={handleBackToHome} />
                     
                 </div>
-
-                {/* ResultsModal */}
-                {showModal && (
-                    <ResultsModal   wpm={wpm}
-                                    elapsedSeconds={elapsed}
-                                    mistakes={mistakes}
-                                    accuracy={accuracy}
-                                    onRestart={handleRestart}
-                                    onClose={handleCloseModal}
-                                    onBackToHome={handleBackToHome}
-                    />
-                )}
             </div>
         </div>
     );
