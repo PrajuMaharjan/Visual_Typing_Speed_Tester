@@ -12,6 +12,15 @@ export interface MistakeEntry{
     time:number;
 }
 
+export interface ResultsData{
+    wpm:number;
+    elapsedSeconds:number;
+    accuracy:number;
+    mistakes:number;
+    mistakeLog:MistakeEntry[];
+    testSearch:string;
+}
+
 const EXTEND_THRESHOLD=30;
 
 export function useTypingEngine(getText:()=>string,options:TypingEngineOptions={}){
